@@ -119,12 +119,15 @@ chunks = chunker.chunk(text)
 
 | Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| Tôi (Nguyễn Vũ Trọng) | `RecursiveChunker` | 8.0 | Bảo toàn ngữ cảnh cấu trúc đoạn văn/code tốt nhất nhờ phân tách đệ quy linh hoạt. | Chiều dài chunk không hoàn toàn đồng đều, tốn thời gian xử lý hơn. |
-| Hồ Tất Bảo Hoàng | `SentenceChunker` | 7.0 | Giữ nguyên vẹn toàn bộ các câu, tránh rủi ro cắt đôi câu giữa chừng. | Dễ sinh ra các chunk có số lượng ký tự quá dài nếu các câu trong tài liệu dài. |
-| Nguyễn Phương Nam | `FixedSizeChunker` | 5.0 | Chiều dài các chunk đều tăm tắp, kiểm soát chính xác tài nguyên tokens nạp vào LLM. | Thường xuyên cắt ngang từ hoặc câu ở ranh giới chunk, làm mất mát ngữ cảnh. |
+| Tôi (Nguyễn Vũ Trọng) | `RecursiveChunker` | 8.0 | Bảo toàn ngữ cảnh đoạn văn tốt nhất nhờ phân tách theo cấp bậc logic. | Tốn nhiều thời gian xử lý và độ dài chunk không đồng đều. |
+| Hồ Tất Bảo Hoàng | `Custom Chunker` (theo từng slide) | 9.0 | Phù hợp tuyệt đối cho định dạng bài trình bày (slides), bảo toàn trọn vẹn thông tin mỗi slide. | Phụ thuộc vào định dạng ranh giới slide rõ ràng, khó áp dụng cho văn bản thô (raw text). |
+| Nguyễn Phương Nam | `FixedSizeChunker` | 5.0 | Các chunk đều nhau, kiểm soát token chính xác cho mô hình LLM. | Dễ cắt ngang từ hoặc câu làm suy giảm nghiêm trọng ngữ cảnh truy xuất. |
+| Lê Đức Việt | `SentenceChunker` | 7.0 | Giữ nguyên vẹn ý nghĩa của câu đơn lẻ, thích hợp cho tài liệu ngắn. | Khó giới hạn độ dài chunk khi gặp các câu quá dài. |
+| Đào Tất Thắng | `RecursiveChunker (Tuned)` | 8.5 | Tối ưu hóa tham số `chunk_size = 150` giúp tăng số lượng chunk liên quan được truy xuất. | Đôi khi chia nhỏ quá mức làm mất tính mạch lạc của các chủ đề lớn. |
+| Bùi Văn Tuân | `Custom Chunker` (theo Section) | 8.5 | Giữ nguyên cấu trúc của tiêu đề lớn (`#`, `##`), bảo toàn ngữ cảnh toàn diện. | Dễ tạo ra các chunk quá khổ nếu một section chứa quá nhiều nội dung. |
 
 **Strategy nào tốt nhất cho domain này? Tại sao?**
-> *Đối với domain Tài liệu Hướng dẫn & Quy trình (Technical Playbooks & Guides) có cấu trúc phân cấp rõ ràng, chiến lược `RecursiveChunker` hoạt động tốt nhất. Nó giúp giữ trọn vẹn ngữ cảnh của các khối lệnh code và các bước SOPs logic, từ đó tối ưu hóa chất lượng câu trả lời từ RAG.*
+> *Đối với domain Tài liệu Hướng dẫn & Quy trình (Technical Playbooks & Guides) có cấu trúc phân cấp rõ ràng, chiến lược `RecursiveChunker` (của tôi) và `Custom Chunker theo Section` (của Tuân) hoạt động hiệu quả nhất vì chúng tôn trọng các ranh giới đoạn văn logic. Tuy nhiên, nếu tài liệu gốc ở dạng bài trình bày, phương pháp `Custom Chunker theo slide` (của Hoàng) sẽ là tối ưu nhất.*
 
 ---
 
@@ -266,7 +269,7 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> *Tôi học được từ Hoàng cách tối ưu hóa các biểu thức regex để tách câu trong tiếng Việt mà không bị lỗi bởi các từ viết tắt (như "v.v.", "SOPs"). Từ Nam, tôi học được cách tích hợp cấu trúc ChromaDB hiệu quả và cấu hình các thuộc tính metadata lọc thông minh.*
+> *Tôi học được từ bạn Hồ Tất Bảo Hoàng cách thiết kế custom chunking theo từng trang slide để bảo toàn tuyệt đối ngữ cảnh khi dữ liệu ở dạng slide thuyết trình. Bạn Lê Đức Việt, Đào Tất Thắng và Bùi Văn Tuân đã chia sẻ nhiều kinh nghiệm quý báu về tinh chỉnh tham số Recursive Chunker và phân tách theo các Section tiêu đề. Bạn Nguyễn Phương Nam cũng hỗ trợ tôi đắc lực trong việc cấu hình bộ lọc metadata trên ChromaDB.*
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
 > *Qua buổi demo của nhóm khác, tôi nhận ra cách họ sử dụng chiến lược hybrid search (kết hợp keyword BM25 và Vector Search) giúp cải thiện rất nhiều đối với các truy vấn chứa từ khóa kỹ thuật chuyên ngành.*
