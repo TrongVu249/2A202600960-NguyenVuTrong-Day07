@@ -74,9 +74,15 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | Tài liệu | Strategy | Chunk Count | Avg Length | Preserves Context? |
 |-----------|----------|-------------|------------|-------------------|
-| | FixedSizeChunker (`fixed_size`) | | | |
-| | SentenceChunker (`by_sentences`) | | | |
-| | RecursiveChunker (`recursive`) | | | |
+| `customer_support_playbook.txt` | FixedSizeChunker (`fixed_size`) | 11 | 199.27 | Không (Bị cắt ngang từ hoặc câu ở ranh giới chunk) |
+| | SentenceChunker (`by_sentences`) | 4 | 421.00 | Có (Giữ nguyên cấu trúc câu hoàn chỉnh) |
+| | RecursiveChunker (`recursive`) | 11 | 152.09 | Có (Giữ nguyên câu/đoạn văn logic nhờ độ ưu tiên dấu câu) |
+| `python_intro.txt` | FixedSizeChunker (`fixed_size`) | 13 | 195.69 | Không (Bị cắt ngang từ hoặc câu ở ranh giới chunk) |
+| | SentenceChunker (`by_sentences`) | 5 | 387.00 | Có (Giữ nguyên cấu trúc câu hoàn chỉnh) |
+| | RecursiveChunker (`recursive`) | 12 | 160.08 | Có (Giữ nguyên câu/đoạn văn logic nhờ độ ưu tiên dấu câu) |
+| `rag_system_design.md` | FixedSizeChunker (`fixed_size`) | 16 | 196.31 | Không (Bị cắt ngang từ hoặc câu ở ranh giới chunk) |
+| | SentenceChunker (`by_sentences`) | 5 | 476.00 | Có (Giữ nguyên cấu trúc câu hoàn chỉnh) |
+| | RecursiveChunker (`recursive`) | 16 | 147.56 | Có (Giữ nguyên câu/đoạn văn logic nhờ độ ưu tiên dấu câu) |
 
 ### Strategy Của Tôi
 
