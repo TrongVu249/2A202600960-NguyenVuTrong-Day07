@@ -115,6 +115,16 @@ chunks = chunker.chunk(text)
 | `python_intro.txt` | `fixed_size` (Baseline) | 13 | 195.69 | Trung bình (Các cấu trúc code Python và diễn giải cú pháp bị cắt vụn nửa chừng) |
 | | `recursive` (Của tôi) | 12 | 160.08 | Rất tốt (Giữ trọn vẹn ngữ nghĩa câu và toàn bộ khối code Python nhỏ) |
 
+### So Sánh Với Thành Viên Khác
+
+| Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
+|-----------|----------|----------------------|-----------|----------|
+| Tôi | | | | |
+| [Tên] | | | | |
+| [Tên] | | | | |
+
+**Strategy nào tốt nhất cho domain này? Tại sao?**
+> *Viết 2-3 câu:*
 
 ---
 
