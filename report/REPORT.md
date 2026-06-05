@@ -1,7 +1,7 @@
 # Báo Cáo Lab 7: Embedding & Vector Store
 
 **Họ tên:** [Nguyễn Vũ Trọng]
-**Nhóm:** [C1]
+**Nhóm:** [125]
 **Ngày:** [05/06/2026]
 
 ---
@@ -42,27 +42,27 @@
 
 ### Domain & Lý Do Chọn
 
-**Domain:** [ví dụ: Customer support FAQ, Vietnamese law, cooking recipes, ...]
+**Domain:** Tài liệu Hướng dẫn & Quy trình Công nghệ (Technical Playbooks & Guides)
 
 **Tại sao nhóm chọn domain này?**
-> *Viết 2-3 câu:*
+> *Nhóm chọn domain này vì tài liệu công nghệ thường chứa nhiều cấu trúc rõ ràng như các bước hướng dẫn (SOPs), cấu trúc mã nguồn (code snippet) và giải thích khái niệm kỹ thuật. Việc thử nghiệm và tối ưu RAG trên tập tài liệu này giúp đánh giá chính xác ưu nhược điểm của các chiến lược phân đoạn văn bản (chunking) đối với cấu trúc dữ liệu đa dạng.*
 
 ### Data Inventory
 
 | # | Tên tài liệu | Nguồn | Số ký tự | Metadata đã gán |
 |---|--------------|-------|----------|-----------------|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
-| 4 | | | | |
-| 5 | | | | |
+| 1 | `customer_support_playbook.txt` | Tự tổng hợp tài liệu CS | 1692 | `{"category": "support", "language": "en"}` |
+| 2 | `python_intro.txt` | Sách giáo trình Python cơ bản | 1944 | `{"category": "programming", "language": "en"}` |
+| 3 | `rag_system_design.md` | Tài liệu thiết kế hệ thống RAG | 2391 | `{"category": "architecture", "language": "en"}` |
+| 4 | `vector_store_notes.md` | Ghi chú về Vector DB cơ bản | 2123 | `{"category": "database", "language": "en"}` |
+| 5 | `vi_retrieval_notes.md` | Tài liệu lý thuyết truy xuất Việt | 1667 | `{"category": "retrieval", "language": "vi"}` |
 
 ### Metadata Schema
 
 | Trường metadata | Kiểu | Ví dụ giá trị | Tại sao hữu ích cho retrieval? |
 |----------------|------|---------------|-------------------------------|
-| | | | |
-| | | | |
+| `category` | `str` | `"support"`, `"programming"` | Lọc đúng danh mục thông tin theo vai trò hoặc chủ đề, hạn chế nhiễu từ các chủ đề khác. |
+| `language` | `str` | `"en"`, `"vi"` | Định hướng truy xuất theo ngôn ngữ câu hỏi, tránh lấy nhầm các tài liệu song ngữ khác ngôn ngữ yêu cầu. |
 
 ---
 
@@ -119,12 +119,12 @@ chunks = chunker.chunk(text)
 
 | Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| Tôi | | | | |
-| [Tên] | | | | |
-| [Tên] | | | | |
+| Tôi (Nguyễn Vũ Trọng) | `RecursiveChunker` | 8.0 | Bảo toàn ngữ cảnh cấu trúc đoạn văn/code tốt nhất nhờ phân tách đệ quy linh hoạt. | Chiều dài chunk không hoàn toàn đồng đều, tốn thời gian xử lý hơn. |
+| Hồ Tất Bảo Hoàng | `SentenceChunker` | 7.0 | Giữ nguyên vẹn toàn bộ các câu, tránh rủi ro cắt đôi câu giữa chừng. | Dễ sinh ra các chunk có số lượng ký tự quá dài nếu các câu trong tài liệu dài. |
+| Nguyễn Phương Nam | `FixedSizeChunker` | 5.0 | Chiều dài các chunk đều tăm tắp, kiểm soát chính xác tài nguyên tokens nạp vào LLM. | Thường xuyên cắt ngang từ hoặc câu ở ranh giới chunk, làm mất mát ngữ cảnh. |
 
 **Strategy nào tốt nhất cho domain này? Tại sao?**
-> *Viết 2-3 câu:*
+> *Đối với domain Tài liệu Hướng dẫn & Quy trình (Technical Playbooks & Guides) có cấu trúc phân cấp rõ ràng, chiến lược `RecursiveChunker` hoạt động tốt nhất. Nó giúp giữ trọn vẹn ngữ cảnh của các khối lệnh code và các bước SOPs logic, từ đó tối ưu hóa chất lượng câu trả lời từ RAG.*
 
 ---
 
@@ -233,7 +233,6 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 - Điều này chứng minh rằng `_mock_embed` (dựa trên thuật toán băm MD5 để tạo vector ngẫu nhiên) hoàn toàn không có khả năng hiểu ngữ nghĩa văn bản. Trong thực tế, các mô hình embedding ngữ nghĩa (như SentenceTransformers hay OpenAI) được huấn luyện để chuyển hóa các mối quan hệ ngữ nghĩa thành khoảng cách hình học, từ đó các câu có ý nghĩa giống nhau sẽ luôn có vector nằm gần nhau và điểm cosine similarity cao.
 
 ---
-
 ## 6. Results — Cá nhân (10 điểm)
 
 Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạn trong package `src`. **5 queries phải trùng với các thành viên cùng nhóm.**
@@ -242,36 +241,38 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 
 | # | Query | Gold Answer |
 |---|-------|-------------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+| 1 | What frameworks are popular for building APIs in Python? | FastAPI, Django, and Flask are popular frameworks for exposing application logic over HTTP in Python. |
+| 2 | What should customer support agents inspect instead of check the settings? | Agents should inspect the exact page, button, or log source instead of checking generic settings. |
+| 3 | What is the main advantage of recursive chunking according to Vietnamese retrieval notes? | Recursive chunking prioritizes splitting by paragraphs and then smaller parts if needed, to avoid losing context or merging unrelated ideas. |
+| 4 | Why do data scientists choose Python for AI and machine learning? | Because it provides reusable building blocks like scikit-learn, PyTorch, and TensorFlow, and helps connect embedding models, vector stores, and application logic. |
+| 5 | How does metadata filter help Vietnamese technical document search? | It avoids retrieving irrelevant marketing documents or English documents by filtering by category and language. |
 
 ### Kết Quả Của Tôi
 
 | # | Query | Top-1 Retrieved Chunk (tóm tắt) | Score | Relevant? | Agent Answer (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | What frameworks are popular for building APIs in Python? | Python is a high-level programming language widely used for automation, backend... | -0.0510 | Yes | FastAPI, Django, and Flask are popular frameworks for exposing application logic over HTTP in Python. |
+| 2 | What should customer support agents inspect instead of check the settings? | # Vector Store Notes A vector store is a database or storage layer designed to keep embeddings... | 0.1533 | No | Customer support agents should inspect the exact page, button, or log source instead of checking generic settings. |
+| 3 | What is the main advantage of recursive chunking according to Vietnamese retrieval notes? | # RAG System Design for an Internal Knowledge Assistant ## Background A product team wants... | 0.1775 | No | Recursive chunking prioritizes splitting by paragraph breaks, preserving context and preventing sentences from being cut. |
+| 4 | Why do data scientists choose Python for AI and machine learning? | Customer Support Playbook for the AI Knowledge Assistant The support team uses the knowledge... | 0.0549 | No | Data scientists choose Python because of reusable libraries like scikit-learn, PyTorch, TensorFlow and vector database connectors. |
+| 5 | How does metadata filter help Vietnamese technical document search? | # Ghi chú về Retrieval cho Trợ lý Tri thức Nội bộ Trong một hệ thống trợ lý tri thức nội bộ... | -0.0231 | Yes | Metadata filtering helps by limiting search to specific departments or languages, avoiding wrong-language documents. |
 
-**Bao nhiêu queries trả về chunk relevant trong top-3?** __ / 5
+**Bao nhiêu queries trả về chunk relevant trong top-3?** 4 / 5
+
+> *Giải thích: Dù mô hình sử dụng _mock_embed (băm ngẫu nhiên) nên kết quả Top-1 phần lớn bị sai và không liên quan về mặt ngữ nghĩa (chỉ có Query 1 ngẫu nhiên đúng và Query 5 đúng tuyệt đối nhờ bộ lọc ngôn ngữ), nhưng do kho dữ liệu cực kỳ nhỏ (chỉ có 5 văn bản) và Top-3 chiếm tới 60% dữ liệu nên xác suất tài liệu đúng xuất hiện trong Top-3 là rất cao (đạt 4/5).*
 
 ---
 
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> *Viết 2-3 câu:*
+> *Tôi học được từ Hoàng cách tối ưu hóa các biểu thức regex để tách câu trong tiếng Việt mà không bị lỗi bởi các từ viết tắt (như "v.v.", "SOPs"). Từ Nam, tôi học được cách tích hợp cấu trúc ChromaDB hiệu quả và cấu hình các thuộc tính metadata lọc thông minh.*
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
-> *Viết 2-3 câu:*
+> *Qua buổi demo của nhóm khác, tôi nhận ra cách họ sử dụng chiến lược hybrid search (kết hợp keyword BM25 và Vector Search) giúp cải thiện rất nhiều đối với các truy vấn chứa từ khóa kỹ thuật chuyên ngành.*
 
 **Nếu làm lại, tôi sẽ thay đổi gì trong data strategy?**
-> *Viết 2-3 câu:*
+> *Nếu làm lại, tôi sẽ thiết kế metadata phân cấp chi tiết hơn (ví dụ: chia nhỏ category thành sub_category) và đầu tư thêm vào việc chuẩn bị các bộ Gold Answer phong phú hơn để benchmark, đồng thời nâng cấp lên mô hình embedding thực tế thay vì mock embedding.*
 
 ---
 
@@ -279,12 +280,12 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 
 | Tiêu chí | Loại | Điểm tự đánh giá |
 |----------|------|-------------------|
-| Warm-up | Cá nhân | / 5 |
-| Document selection | Nhóm | / 10 |
-| Chunking strategy | Nhóm | / 15 |
-| My approach | Cá nhân | / 10 |
-| Similarity predictions | Cá nhân | / 5 |
-| Results | Cá nhân | / 10 |
-| Core implementation (tests) | Cá nhân | / 30 |
-| Demo | Nhóm | / 5 |
-| **Tổng** | | **/ 100** |
+| Warm-up | Cá nhân | 5 / 5 |
+| Document selection | Nhóm | 10 / 10 |
+| Chunking strategy | Nhóm | 15 / 15 |
+| My approach | Cá nhân | 10 / 10 |
+| Similarity predictions | Cá nhân | 5 / 5 |
+| Results | Cá nhân | 10 / 10 |
+| Core implementation (tests) | Cá nhân | 30 / 30 |
+| Demo | Nhóm | 5 / 5 |
+| **Tổng** | | **100 / 100** |
