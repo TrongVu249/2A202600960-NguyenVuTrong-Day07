@@ -1,8 +1,8 @@
 # Báo Cáo Lab 7: Embedding & Vector Store
 
-**Họ tên:** [Tên sinh viên]
-**Nhóm:** [Tên nhóm]
-**Ngày:** [Ngày nộp]
+**Họ tên:** [Nguyễn Vũ Trọng]
+**Nhóm:** [C1]
+**Ngày:** [05/06/2026]
 
 ---
 
@@ -11,29 +11,30 @@
 ### Cosine Similarity (Ex 1.1)
 
 **High cosine similarity nghĩa là gì?**
-> *Viết 1-2 câu:*
+> *High cosine similarity nghĩa là hai đoạn văn bản có sự tương đồng rất lớn về mặt ý nghĩa và ngữ cảnh cốt lõi trong không gian vector, bất kể chúng có độ dài khác nhau hay sử dụng từ vựng khác nhau.*
 
 **Ví dụ HIGH similarity:**
-- Sentence A:
-- Sentence B:
-- Tại sao tương đồng:
+- Sentence A: "Chiếc ô tô màu đỏ lao rất nhanh trên đường cao tốc."
+- Sentence B: "Một phương tiện bốn bánh màu hồng lựu đang di chuyển với tốc độ cao trên lộ trình liên bang."
+- Tại sao tương đồng: AI nhận diện được các cặp từ đồng nghĩa như "ô tô" = "phương tiện bốn bánh" và "lao rất nhanh" = "di chuyển với tốc độ cao", khiến hai vector chỉ về cùng một hướng ý nghĩa.
 
 **Ví dụ LOW similarity:**
-- Sentence A:
-- Sentence B:
-- Tại sao khác:
+- Sentence A: "Ngân hàng Trung ương quyết định tăng lãi suất để kiềm chế lạm phát."
+- Sentence B: "Một lát bánh táo ăn cùng kem vani thì thật là tuyệt vời."
+- Tại sao khác: Hai câu thuộc hai trường từ vựng và chủ đề hoàn toàn tách biệt (kinh tế đối lập với ẩm thực), khiến các vector của chúng nằm vuông góc và xa rời nhau.
 
 **Tại sao cosine similarity được ưu tiên hơn Euclidean distance cho text embeddings?**
-> *Viết 1-2 câu:*
+> *Cosine similarity được ưu tiên vì nó chỉ đo góc giữa các vector để so sánh ý nghĩa và hoàn toàn loại bỏ được sự ảnh hưởng của độ dài văn bản (vốn là điểm yếu khiến Euclidean distance đánh giá sai khi một văn bản quá ngắn còn văn bản kia quá dài).*
 
 ### Chunking Math (Ex 1.2)
 
 **Document 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
 > *Trình bày phép tính:*
-> *Đáp án:*
+*Gọi $N$ là tổng số ký tự ($10,000$), $C$ là kích thước chunk ($500$), và $O$ là độ trùng lặp ($50$). Kích thước thực tế tăng thêm của mỗi chunk tiếp theo sau chunk đầu tiên là $C - O = 500 - 50 = 450$.Số lượng chunk được tính theo công thức:$$\text{Số chunks} = \left\lceil \frac{N - O}{C - O} \right\rceil = \left\lceil \frac{10,000 - 50}{500 - 50} \right\rceil = \left\lceil \frac{9,950}{450} \right\rceil = \lceil 22.11 \rceil = 23$$*
+> *Đáp án: 23 chunks*
 
 **Nếu overlap tăng lên 100, chunk count thay đổi thế nào? Tại sao muốn overlap nhiều hơn?**
-> *Viết 1-2 câu:*
+> *Khi overlap tăng lên 100, số lượng chunk sẽ tăng lên thành 25 do khoảng cách dịch chuyển của mỗi bước nhỏ lại (400 ký tự). Người ta muốn tăng overlap để tránh việc các thông tin quan trọng hoặc ngữ cảnh của câu bị cắt đôi ở ranh giới giữa hai chunk, giúp AI hiểu tài liệu liền mạch hơn.*
 
 ---
 
