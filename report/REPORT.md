@@ -269,10 +269,10 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> *Tôi học được từ bạn Hồ Tất Bảo Hoàng cách thiết kế custom chunking theo từng trang slide để bảo toàn tuyệt đối ngữ cảnh khi dữ liệu ở dạng slide thuyết trình. Bạn Lê Đức Việt, Đào Tất Thắng và Bùi Văn Tuân đã chia sẻ nhiều kinh nghiệm quý báu về tinh chỉnh tham số Recursive Chunker và phân tách theo các Section tiêu đề. Bạn Nguyễn Phương Nam cũng hỗ trợ tôi đắc lực trong việc cấu hình bộ lọc metadata trên ChromaDB.*
+> *Tôi học được Hoàng cách thiết kế custom chunking theo từng trang slide để bảo toàn tuyệt đối ngữ cảnh khi dữ liệu ở dạng slide thuyết trình. Việt, Thắng và Tuân đã chia sẻ nhiều kinh nghiệm quý báu về tinh chỉnh tham số Recursive Chunker và phân tách theo các Section tiêu đề. Nam cũng hỗ trợ tôi đắc lực trong việc cấu hình bộ lọc metadata trên ChromaDB.*
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
-> *Qua buổi demo của nhóm khác, tôi nhận ra cách họ sử dụng chiến lược hybrid search (kết hợp keyword BM25 và Vector Search) giúp cải thiện rất nhiều đối với các truy vấn chứa từ khóa kỹ thuật chuyên ngành.*
+> *Qua buổi demo của nhóm khác, tôi nhận ra cách họ sử dụng chiến lược hybrid search giúp cải thiện rất nhiều đối với các truy vấn chứa từ khóa kỹ thuật chuyên ngành.*
 
 **Nếu làm lại, tôi sẽ thay đổi gì trong data strategy?**
 > *Nếu làm lại, tôi sẽ thiết kế metadata phân cấp chi tiết hơn (ví dụ: chia nhỏ category thành sub_category) và đầu tư thêm vào việc chuẩn bị các bộ Gold Answer phong phú hơn để benchmark, đồng thời nâng cấp lên mô hình embedding thực tế thay vì mock embedding.*
