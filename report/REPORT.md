@@ -30,7 +30,7 @@
 
 **Document 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
 > *Trình bày phép tính:*
-*Gọi $N$ là tổng số ký tự ($10,000$), $C$ là kích thước chunk ($500$), và $O$ là độ trùng lặp ($50$). Kích thước thực tế tăng thêm của mỗi chunk tiếp theo sau chunk đầu tiên là $C - O = 500 - 50 = 450$.Số lượng chunk được tính theo công thức:$$\text{Số chunks} = \left\lceil \frac{N - O}{C - O} \right\rceil = \left\lceil \frac{10,000 - 50}{500 - 50} \right\rceil = \left\lceil \frac{9,950}{450} \right\rceil = \lceil 22.11 \rceil = 23$$*
+*Gọi N là tổng số ký tự (10,000), C là kích thước chunk (500), và O là độ trùng lặp (50). Kích thước thực tế tăng thêm của mỗi chunk tiếp theo sau chunk đầu tiên là C - O = 500 - 50 = 450.Số lượng chunk được tính theo công thức:{Số chunks} = \left\lceil \frac{N - O}{C - O} \right\rceil = \left\lceil \frac{10,000 - 50}{500 - 50} \right\rceil = \left\lceil \frac{9,950}{450} \right\rceil = \lceil 22.11 \rceil = 23*
 > *Đáp án: 23 chunks*
 
 **Nếu overlap tăng lên 100, chunk count thay đổi thế nào? Tại sao muốn overlap nhiều hơn?**
@@ -86,36 +86,34 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 ### Strategy Của Tôi
 
-**Loại:** [FixedSizeChunker / SentenceChunker / RecursiveChunker / custom strategy]
+**Loại:** `RecursiveChunker`
 
 **Mô tả cách hoạt động:**
-> *Viết 3-4 câu: strategy chunk thế nào? Dựa trên dấu hiệu gì?*
+- `RecursiveChunker` chia nhỏ văn bản đệ quy dựa trên một danh sách các ký tự phân tách theo độ ưu tiên giảm dần: đoạn văn (`\n\n`), dòng (`\n`), câu kết thúc bằng dấu chấm (`. `), khoảng trắng từ (` `), và ký tự rỗng (`""`).
+- Nếu đoạn văn bản hiện tại lớn hơn `chunk_size` (ở đây cấu hình là 200), nó sẽ phân tách bằng ký tự phân tách có ưu tiên cao nhất, sau đó đệ quy xuống các phần nhỏ hơn bằng các ký tự phân tách tiếp theo.
+- Sau khi phân tách, các phần nhỏ sẽ được gộp lại với nhau một cách tối đa mà không vượt quá `chunk_size` nhằm bảo toàn toàn bộ ngữ cảnh một cách tự nhiên nhất.
 
 **Tại sao tôi chọn strategy này cho domain nhóm?**
-> *Viết 2-3 câu: domain có pattern gì mà strategy khai thác?*
+- Tài liệu nhóm thuộc domain **Tài liệu hướng dẫn & Quy trình (Technical Docs & SOPs)**. Các văn bản này chứa nhiều tiêu đề, danh sách gạch đầu dòng và các đoạn văn logic hoàn chỉnh.
+- Sử dụng `RecursiveChunker` giúp giữ nguyên các khối thông tin logic (như một bước hướng dẫn hoặc đoạn code ví dụ) thay vì cắt ngang ở giữa câu như `FixedSizeChunker`, giúp mô hình ngôn ngữ (LLM) sau này nhận diện đầy đủ ngữ cảnh để trả lời chính xác.
 
-**Code snippet (nếu custom):**
+**Code snippet:**
 ```python
-# Paste implementation here
+from src import RecursiveChunker
+
+# Khởi tạo và sử dụng chiến lược Recursive Chunker
+chunker = RecursiveChunker(chunk_size=200)
+chunks = chunker.chunk(text)
 ```
 
 ### So Sánh: Strategy của tôi vs Baseline
 
 | Tài liệu | Strategy | Chunk Count | Avg Length | Retrieval Quality? |
 |-----------|----------|-------------|------------|--------------------|
-| | best baseline | | | |
-| | **của tôi** | | | |
-
-### So Sánh Với Thành Viên Khác
-
-| Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
-|-----------|----------|----------------------|-----------|----------|
-| Tôi | | | | |
-| [Tên] | | | | |
-| [Tên] | | | | |
-
-**Strategy nào tốt nhất cho domain này? Tại sao?**
-> *Viết 2-3 câu:*
+| `customer_support_playbook.txt` | `fixed_size` (Baseline) | 11 | 199.27 | Trung bình kém (Cắt ranh giới từ hoặc câu khiến thông tin bị khuyết thiếu khi truy vấn) |
+| | `recursive` (Của tôi) | 11 | 152.09 | Tốt (Các chunk kết thúc ở khoảng trắng hoặc ranh giới câu hợp lý, đầy đủ ý nghĩa) |
+| `python_intro.txt` | `fixed_size` (Baseline) | 13 | 195.69 | Trung bình (Các cấu trúc code Python và diễn giải cú pháp bị cắt vụn nửa chừng) |
+| | `recursive` (Của tôi) | 12 | 160.08 | Rất tốt (Giữ trọn vẹn ngữ nghĩa câu và toàn bộ khối code Python nhỏ) |
 
 ---
 
