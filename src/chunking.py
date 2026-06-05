@@ -47,6 +47,7 @@ class SentenceChunker:
         self.max_sentences_per_chunk = max(1, max_sentences_per_chunk)
 
     def chunk(self, text: str) -> list[str]:
+        # TODO: split into sentences, group into chunks
         if not text:
             return []
         
@@ -76,11 +77,13 @@ class RecursiveChunker:
         self.chunk_size = chunk_size
 
     def chunk(self, text: str) -> list[str]:
+        # TODO: implement recursive splitting strategy
         if not text:
             return []
         return self._split(text, self.separators)
 
     def _split(self, current_text: str, remaining_separators: list[str]) -> list[str]:
+        # TODO: recursive helper used by RecursiveChunker.chunk
         if len(current_text) <= self.chunk_size:
             return [current_text]
         
@@ -141,6 +144,7 @@ def compute_similarity(vec_a: list[float], vec_b: list[float]) -> float:
 
     Returns 0.0 if either vector has zero magnitude.
     """
+    # TODO: implement cosine similarity formula
     if not vec_a or not vec_b:
         return 0.0
     dot_prod = _dot(vec_a, vec_b)
@@ -155,6 +159,7 @@ class ChunkingStrategyComparator:
     """Run all built-in chunking strategies and compare their results."""
 
     def compare(self, text: str, chunk_size: int = 200) -> dict:
+        # TODO: call each chunker, compute stats, return comparison dict
         fixed_chunker = FixedSizeChunker(chunk_size)
         sentence_chunker = SentenceChunker()
         recursive_chunker = RecursiveChunker(chunk_size=chunk_size)

@@ -30,6 +30,7 @@ class EmbeddingStore:
         try:
             import chromadb
 
+            # TODO: initialize chromadb client + collection
             client = chromadb.Client()
             self._collection = client.get_or_create_collection(
                 name=collection_name,
@@ -41,6 +42,7 @@ class EmbeddingStore:
             self._collection = None
 
     def _make_record(self, doc: Document) -> dict[str, Any]:
+        # TODO: build a normalized stored record for one document
         return {
             "id": doc.id,
             "content": doc.content,
@@ -49,6 +51,7 @@ class EmbeddingStore:
         }
 
     def _search_records(self, query: str, records: list[dict[str, Any]], top_k: int) -> list[dict[str, Any]]:
+        # TODO: run in-memory similarity search over provided records
         query_emb = self._embedding_fn(query)
         results = []
         for r in records:
@@ -69,6 +72,7 @@ class EmbeddingStore:
         For ChromaDB: use collection.add(ids=[...], documents=[...], embeddings=[...])
         For in-memory: append dicts to self._store
         """
+        # TODO: embed each doc and add to store
         if self._use_chroma:
             ids = [doc.id for doc in docs]
             documents = [doc.content for doc in docs]
@@ -91,6 +95,7 @@ class EmbeddingStore:
 
         For in-memory: compute dot product of query embedding vs all stored embeddings.
         """
+        # TODO: embed query, compute similarities, return top_k
         if self._use_chroma:
             query_emb = self._embedding_fn(query)
             results = self._collection.query(
@@ -112,6 +117,7 @@ class EmbeddingStore:
 
     def get_collection_size(self) -> int:
         """Return the total number of stored chunks."""
+        # TODO
         if self._use_chroma:
             return self._collection.count()
         return len(self._store)
@@ -122,6 +128,7 @@ class EmbeddingStore:
 
         First filter stored chunks by metadata_filter, then run similarity search.
         """
+        # TODO: filter by metadata, then search among filtered chunks
         if not metadata_filter:
             return self.search(query, top_k)
 
@@ -167,6 +174,7 @@ class EmbeddingStore:
 
         Returns True if any chunks were removed, False otherwise.
         """
+        # TODO: remove all stored chunks where metadata['doc_id'] == doc_id
         if self._use_chroma:
             try:
                 self._collection.delete(ids=[doc_id])
